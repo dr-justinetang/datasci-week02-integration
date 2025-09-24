@@ -2,7 +2,15 @@
 # src/data_analysis_functions.py
 import os
 
+def load_data(filename):
+    """Generic loader that decides which function to use based on file type"""
+    if filename.endswith('.csv'):
+        return load_csv(filename)
+    else:
+        raise ValueError("Unsupported file format")
+
 def load_csv(filename):
+    """Load CSV file and return list of student dicts"""
     students = []
     with open(filename, 'r') as f:
         lines = f.readlines()[1:]  # skip header
@@ -17,8 +25,10 @@ def load_csv(filename):
     return students
 
 def analyze_data(students):
+    """Analyze student data and return statistics dictionary"""
     total = len(students)
     grades = [s['grade'] for s in students]
+
     subjects = {}
     for s in students:
         subjects[s['subject']] = subjects.get(s['subject'], 0) + 1
@@ -35,6 +45,7 @@ def analyze_data(students):
     }
 
 def analyze_grade_distribution(grades):
+    """Return count of grades by letter ranges"""
     dist = {'A':0,'B':0,'C':0,'D':0,'F':0}
     for g in grades:
         if g >= 90:
@@ -50,6 +61,7 @@ def analyze_grade_distribution(grades):
     return dist
 
 def save_results(results, filename):
+    """Write analysis results to output file"""
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w') as f:
         f.write(f"Total number of students: {results['total']}\n")
@@ -65,10 +77,12 @@ def save_results(results, filename):
             f.write(f"  {grade}: {count} ({percent:.1f}%)\n")
 
 def main():
-    students = load_csv('data/students.csv')
+    students = load_data('data/students.csv')
     results = analyze_data(students)
     save_results(results, 'output/analysis_report.txt')
     print("Advanced analysis complete. Report saved to output/analysis_report.txt")
 
 if __name__ == "__main__":
     main()
+
+
