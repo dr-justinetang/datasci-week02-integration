@@ -3,7 +3,7 @@
 import os
 
 def load_csv(filename):
-    """Load CSV data and return a list of student dictionaries."""
+    """Load CSV data"""
     students = []
     with open(filename, 'r') as f:
         lines = f.readlines()[1:]  # skip header
@@ -17,15 +17,8 @@ def load_csv(filename):
             })
     return students
 
-def load_data(filename):
-    """Generic loader that checks file extension and delegates to appropriate loader."""
-    if filename.endswith('.csv'):
-        return load_csv(filename)
-    else:
-        raise ValueError(f"Unsupported file type: {filename}")
-
 def analyze_grade_distribution(grades):
-    """Return count of letter grades A-F."""
+    """Count grades by letter ranges"""
     dist = {'A':0,'B':0,'C':0,'D':0,'F':0}
     for g in grades:
         if g >= 90:
@@ -41,7 +34,7 @@ def analyze_grade_distribution(grades):
     return dist
 
 def analyze_data(students):
-    """Return multiple statistics about students."""
+    """Return dictionary with statistics"""
     total = len(students)
     grades = [s['grade'] for s in students]
 
@@ -61,7 +54,6 @@ def analyze_data(students):
     }
 
 def save_results(results, filename):
-    """Write analysis results to a file."""
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w') as f:
         f.write(f"Total number of students: {results['total']}\n")
@@ -73,11 +65,11 @@ def save_results(results, filename):
             f.write(f"  {sub}: {count}\n")
         f.write("\nGrade distribution:\n")
         for grade, count in results['grade_distribution'].items():
-            percent = (count / results['total']) * 100
+            percent = (count/results['total'])*100
             f.write(f"  {grade}: {count} ({percent:.1f}%)\n")
 
 def main():
-    students = load_data('data/students.csv')
+    students = load_csv('data/students.csv')
     results = analyze_data(students)
     save_results(results, 'output/analysis_report.txt')
     print("Advanced analysis complete. Report saved to output/analysis_report.txt")
