@@ -3,6 +3,7 @@
 import os
 
 def load_students(filename):
+    """Read CSV and return list of student data"""
     students = []
     with open(filename, 'r') as f:
         lines = f.readlines()[1:]  # skip header
